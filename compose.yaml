@@ -24,8 +24,9 @@ services:
       dockerfile: Dockerfile
     container_name: videoparse-backend
     restart: unless-stopped
-    ports:
-      - "8888:8888"
+    # 不暴露端口，仅内部访问
+    expose:
+      - "8888"
     depends_on:
       redis:
         condition: service_healthy
@@ -46,10 +47,9 @@ services:
     container_name: videoparse-frontend
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - "7891:80"
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
     networks:
       - videoparse-net
     deploy:

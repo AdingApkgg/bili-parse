@@ -6,7 +6,7 @@
  * @Description: In User Settings Edit
  * @FilePath: \html\src\networker\server.js
  */
-//解析服务器列表
+// 解析服务器地址 (通过 nginx 代理到后端)
 export default {
-    server:"https://video_api.kms233.com"
+    server: "/api"
 }

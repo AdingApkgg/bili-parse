@@ -18,7 +18,7 @@ Version/13.0.3 Mobile/15E148 Safari/604.1'
 
 }
 #创建HTTP长连接池
-client = AsyncClient(http2=True)
+client = AsyncClient(http2=True, follow_redirects=True)
 
 # aiohttp发送post请求不知道怎么避免被json格式化，只能使用httpx了
 async def GetWeibo(vid: str, q: str):
@@ -46,23 +46,21 @@ async def GetWeibo(vid: str, q: str):
     # 判断视频清晰度
     _4k_qualitys = ["超清 4K60","超清 4K","超清 2K60","超清 2K"]
     qualitys = ["高清 1080P","高清 720P","标清 480P","流畅 360P"]
+    raw_url = None
+    
     if q == '4k':
         for k in _4k_qualitys:
-            try:
+            if k in post:
                 raw_url = post[k]
                 break
-            except:
-                pass
-    if q =='1080p':
+    if q == '1080p' or raw_url is None:
         for k in qualitys:
-            try:
+            if k in post:
                 raw_url = post[k]
                 break
-            except:
-                pass
 
     if raw_url is None:
-        return "(X_X) 出错啦！"
+        return f"(X_X) 未找到可用清晰度！可用: {list(post.keys())}"
 
     url = 'https:' + raw_url
     return url

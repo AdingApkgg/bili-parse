@@ -15,7 +15,7 @@ headers = {
 url = 'http://tieba.baidu.com/mg/p/getPbData?kz='
 
 #创建HTTP长连接池
-client = AsyncClient()
+client = AsyncClient(follow_redirects=True)
 
 async def GetTieba(vid: int):
     try:

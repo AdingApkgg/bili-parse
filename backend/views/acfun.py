@@ -7,7 +7,7 @@ from services.redis import redis,ac_bangumi_redis
 from fastapi import Response, Query
 
 # 创建HTTP长连接池
-client = AsyncClient(http2=True,verify=False)
+client = AsyncClient(http2=True, verify=False, follow_redirects=True)
 
 parms = {
     'quickViewId' : 'videoInfo_new',

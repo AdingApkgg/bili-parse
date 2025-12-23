@@ -22,15 +22,15 @@
               <p>关于微博外链的一些问题：</p>
               <p>4K、2K视频怎么投稿：</p>
               <p>4K视频在链接后面加 ?q=4k ，2K视频在链接后面加 ?q=2k，默认生成1080p及其以下清晰度的视频。注意问号是英文的<br>
-              例：https://video_api.kms233.com/weibo/1034:4738314251731108?q=4k</p>
+              例：/api/weibo/1034:4738314251731108?q=4k</p>
               <br>
               <p>关于哔哩外链的一些问题：</p>
               <p>如何指定视频的某一个分P外链：在链接后面加 ?p=P号 ，注意问号是英文的<br>
-                例:https://video_api.kms233.com/bili/BV1d34y1C78W?p=2</p>
+                例：/api/bili/BV1d34y1C78W?p=2</p>
               <br>
               <p>关于蓝奏云外链的一些问题：</p>
-              <p>外链格式：https://video_api.kms233.com/lanzou/?url={这里输入文件分享链接}&p={这里输入分享密码}</p>
-              <p>例：https://video_api.kms233.com/lanzou/?url=https://wws.lanzouf.com/iE7vmzjrkij&p=9npv</p>
+              <p>外链格式：/api/lanzou/?url={这里输入文件分享链接}&p={这里输入分享密码}</p>
+              <p>例：/api/lanzou/?url=https://wws.lanzouf.com/iE7vmzjrkij&p=9npv</p>
               <p>2020-2022 开心就好-_-</p>
             </v-card-text>
           </v-card>

@@ -15,7 +15,7 @@ headers = {
 html_url = 'https://m.lanzoux.com/tp/'
 post_url = 'https://m.lanzoux.com/ajaxm.php'
 
-client = AsyncClient()
+client = AsyncClient(follow_redirects=True)
 
 async def get_sign(fileid: str):
     try:
@@ -52,7 +52,7 @@ async def get_nopass_url(fileid: str):
         html = html.text
     except:
         return '(X_X) 服务器获取链接出错'
-    url_pass = str(findall("\?.*'", html)[0]).split('\'')[0]
+    url_pass = str(findall(r"\?.*'", html)[0]).split('\'')[0]
     url = f'https://developer.lanzoug.com/file/{url_pass}'
     real_url = await client.get(url = url, headers=headers)
     real_url = str(real_url.headers['Location']).split('&b=')[0]

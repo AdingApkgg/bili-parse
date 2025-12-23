@@ -35,8 +35,8 @@ info_api_parms = {
 }
 file_url = 'https://www.123pan.com/a/api/share/download/info'
 
-#创建HTTP长连接池
-client = httpx.AsyncClient()
+# 创建HTTP长连接池
+client = httpx.AsyncClient(follow_redirects=True)
 
 
 async def get_file_info(share: dict):

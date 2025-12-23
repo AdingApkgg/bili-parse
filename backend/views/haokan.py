@@ -5,7 +5,7 @@ from router.router import router
 from services.redis import haokan_redis
 from fastapi import Response
 
-client = AsyncClient(http2=True)
+client = AsyncClient(http2=True, follow_redirects=True)
 
 async def getvideolink(vid: int):
     url = 'https://sv.baidu.com/appui/api'

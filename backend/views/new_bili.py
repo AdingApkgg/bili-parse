@@ -24,8 +24,8 @@ video_api_url = 'http://api.bilibili.com/x/player/playurl'
 info_data = ''
 cid_cache = ''
 
-#创建HTTP长连接池
-client = AsyncClient(limits=Limits(keepalive_expiry=120))
+# 创建HTTP长连接池 (跟随重定向)
+client = AsyncClient(limits=Limits(keepalive_expiry=120), follow_redirects=True)
 
 async def get_cid(vid: str,p :int,isav: bool):
     global cid_cache,info_data
@@ -43,8 +43,8 @@ async def get_cid(vid: str,p :int,isav: bool):
             cid_json = cid_json.json()
         except:
             return "(X_X) 服务器获取CID出错"
-        if cid_json['code'] != 200:
-            return "(?_?) 视频状态异常"
+        if cid_json['code'] != 0:
+            return f"(?_?) 视频状态异常: {cid_json.get('message', '未知错误')}"
         info_data = cid_json['data']
         cid = int(cid_json['data'][p - 1]['cid'])
         return cid
@@ -85,9 +85,11 @@ async def get_video_link(vid :str,cid: int,isav: bool):
         link_json1 = await client.get(url=video_api_url,params=video_api_parms_av,headers=headers,timeout=5)
     try:
         link_json = link_json1.json()
+        if link_json['code'] != 0:
+            return f"(X_X) B站返回错误: {link_json.get('message', '未知错误')}"
         url = link_json['data']['durl'][0]['url']
-    except:
-        return f"(X_X) 服务器获取视频链接出错,请刷新重试"
+    except Exception as e:
+        return f"(X_X) 服务器获取视频链接出错: {str(e)}"
     return url
 
 @router.get('/bili/{vid}')
