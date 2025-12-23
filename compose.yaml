@@ -1,9 +1,9 @@
 services:
-  # Redis 缓存服务
   redis:
     image: docker.io/library/redis:7-alpine
     container_name: videoparse-redis
     restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 128mb --maxmemory-policy allkeys-lru
     volumes:
       - redis_data:/data
     networks:
@@ -13,11 +13,14 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
-  # Python FastAPI 后端
   backend:
     build:
-      context: ./python-backed
+      context: ./backend
       dockerfile: Dockerfile
     container_name: videoparse-backend
     restart: unless-stopped
@@ -31,20 +34,28 @@ services:
       - REDIS_PORT=6379
     networks:
       - videoparse-net
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
-  # Vue 前端 (使用 nginx 托管)
   frontend:
     build:
-      context: ./vue-web
+      context: ./frontend
       dockerfile: Dockerfile
     container_name: videoparse-frontend
     restart: unless-stopped
     ports:
       - "8080:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - videoparse-net
+    deploy:
+      resources:
+        limits:
+          memory: 128M
 
 networks:
   videoparse-net:
@@ -52,4 +63,3 @@ networks:
 
 volumes:
   redis_data:
-
