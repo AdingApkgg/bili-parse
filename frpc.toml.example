@@ -1,0 +1,10 @@
+serverAddr = "1.1.1.1"
+serverPort = 7000
+auth.token = "114514"
+
+[[proxies]]
+name = "parse"
+type = "tcp"
+localIP = "frontend"
+localPort = 80
+remotePort = 7891

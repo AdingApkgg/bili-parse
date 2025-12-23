@@ -57,6 +57,21 @@ services:
         limits:
           memory: 128M
 
+  frpc:
+    image: docker.io/snowdreamtech/frpc:latest
+    container_name: videoparse-frpc
+    restart: unless-stopped
+    volumes:
+      - ./frpc.toml:/etc/frp/frpc.toml:ro
+    networks:
+      - videoparse-net
+    depends_on:
+      - frontend
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+
 networks:
   videoparse-net:
     driver: bridge
