@@ -1,6 +1,10 @@
-# 视频外链解析服务管理脚本
-# 用法: .\run.ps1 [命令]
-# 命令: start, stop, restart, status, logs, build, clean
+<#
+.SYNOPSIS
+    Video Parse Service Management Script
+.DESCRIPTION
+    Usage: .\run.ps1 [command]
+    Commands: start, stop, restart, status, logs, build, clean, help
+#>
 
 param(
     [Parameter(Position=0)]
@@ -10,7 +14,6 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-# 检查 podman 或 docker
 function Get-ContainerRuntime {
     if (Get-Command podman -ErrorAction SilentlyContinue) {
         return "podman"
@@ -19,84 +22,83 @@ function Get-ContainerRuntime {
         return "docker"
     }
     else {
-        Write-Error "未找到 podman 或 docker，请先安装容器运行时"
+        Write-Error "podman or docker not found. Please install container runtime first."
         exit 1
     }
 }
 
 $Runtime = Get-ContainerRuntime
-Write-Host "使用容器运行时: $Runtime" -ForegroundColor Cyan
+Write-Host "Container runtime: $Runtime" -ForegroundColor Cyan
 
 function Start-Services {
-    Write-Host "启动服务..." -ForegroundColor Green
+    Write-Host "Starting services..." -ForegroundColor Green
     & $Runtime compose up -d
     Write-Host ""
-    Write-Host "服务已启动，访问地址: http://localhost:7891" -ForegroundColor Yellow
+    Write-Host "Services started: http://localhost:7891" -ForegroundColor Yellow
 }
 
 function Stop-Services {
-    Write-Host "停止服务..." -ForegroundColor Yellow
+    Write-Host "Stopping services..." -ForegroundColor Yellow
     & $Runtime compose down
-    Write-Host "服务已停止" -ForegroundColor Green
+    Write-Host "Services stopped." -ForegroundColor Green
 }
 
 function Restart-Services {
-    Write-Host "重启服务..." -ForegroundColor Yellow
+    Write-Host "Restarting services..." -ForegroundColor Yellow
     & $Runtime compose down
     & $Runtime compose up -d
     Write-Host ""
-    Write-Host "服务已重启，访问地址: http://localhost:7891" -ForegroundColor Green
+    Write-Host "Services restarted: http://localhost:7891" -ForegroundColor Green
 }
 
 function Get-ServiceStatus {
-    Write-Host "服务状态:" -ForegroundColor Cyan
+    Write-Host "Service status:" -ForegroundColor Cyan
     & $Runtime compose ps
 }
 
 function Get-ServiceLogs {
-    Write-Host "查看日志 (Ctrl+C 退出):" -ForegroundColor Cyan
+    Write-Host "Viewing logs (Ctrl+C to exit):" -ForegroundColor Cyan
     & $Runtime compose logs -f
 }
 
 function Build-Services {
-    Write-Host "构建镜像..." -ForegroundColor Yellow
+    Write-Host "Building images..." -ForegroundColor Yellow
     & $Runtime compose build --no-cache
-    Write-Host "构建完成" -ForegroundColor Green
+    Write-Host "Build completed." -ForegroundColor Green
 }
 
 function Clean-All {
-    Write-Host "清理所有容器和镜像..." -ForegroundColor Red
+    Write-Host "Cleaning all containers and images..." -ForegroundColor Red
     & $Runtime compose down -v --rmi all
-    Write-Host "清理完成" -ForegroundColor Green
+    Write-Host "Cleanup completed." -ForegroundColor Green
 }
 
 function Show-Help {
     Write-Host ""
-    Write-Host "视频外链解析服务管理脚本" -ForegroundColor White
-    Write-Host "========================" -ForegroundColor White
+    Write-Host "Video Parse Service Management Script" -ForegroundColor White
+    Write-Host "======================================" -ForegroundColor White
     Write-Host ""
-    Write-Host "用法: .\run.ps1 [命令]" -ForegroundColor White
+    Write-Host "Usage: .\run.ps1 [command]" -ForegroundColor White
     Write-Host ""
-    Write-Host "命令:" -ForegroundColor White
-    Write-Host "  start     启动所有服务" -ForegroundColor White
-    Write-Host "  stop      停止所有服务" -ForegroundColor White
-    Write-Host "  restart   重启所有服务" -ForegroundColor White
-    Write-Host "  status    查看服务状态" -ForegroundColor White
-    Write-Host "  logs      查看实时日志" -ForegroundColor White
-    Write-Host "  build     重新构建镜像" -ForegroundColor White
-    Write-Host "  clean     清理所有容器和镜像" -ForegroundColor White
-    Write-Host "  help      显示此帮助" -ForegroundColor White
+    Write-Host "Commands:" -ForegroundColor White
+    Write-Host "  start     Start all services" -ForegroundColor White
+    Write-Host "  stop      Stop all services" -ForegroundColor White
+    Write-Host "  restart   Restart all services" -ForegroundColor White
+    Write-Host "  status    Show service status" -ForegroundColor White
+    Write-Host "  logs      View realtime logs" -ForegroundColor White
+    Write-Host "  build     Rebuild images" -ForegroundColor White
+    Write-Host "  clean     Remove all containers and images" -ForegroundColor White
+    Write-Host "  help      Show this help" -ForegroundColor White
     Write-Host ""
-    Write-Host "示例:" -ForegroundColor White
-    Write-Host "  .\run.ps1 start     # 启动服务" -ForegroundColor White
-    Write-Host "  .\run.ps1 logs      # 查看日志" -ForegroundColor White
-    Write-Host "  .\run.ps1 restart   # 重启服务" -ForegroundColor White
+    Write-Host "Examples:" -ForegroundColor White
+    Write-Host "  .\run.ps1 start" -ForegroundColor White
+    Write-Host "  .\run.ps1 logs" -ForegroundColor White
+    Write-Host "  .\run.ps1 restart" -ForegroundColor White
     Write-Host ""
-    Write-Host "访问地址: http://localhost:7891" -ForegroundColor Yellow
+    Write-Host "Access URL: http://localhost:7891" -ForegroundColor Yellow
     Write-Host ""
 }
 
-# 切换到脚本所在目录
 Push-Location $PSScriptRoot
 
 try {
