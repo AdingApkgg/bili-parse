@@ -6,7 +6,9 @@
  * @Description: In User Settings Edit
  * @FilePath: \html\src\networker\server.js
  */
-// 解析服务器地址 (通过 nginx 代理到后端)
+// 解析服务器地址
+// 容器模式: nginx 代理 /api -> backend:8888
+// Windows 模式: 直接访问 /api
 export default {
     server: "/api"
 }
