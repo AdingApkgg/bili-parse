@@ -10,8 +10,13 @@ from fastapi.responses import FileResponse
 
 from router import router
 
-file_path = "python-backed/index.html" 
-#exitfile_path = "index.html"  # 后端首页文件
+import os
+
+# 根据运行环境选择文件路径
+if os.path.exists("index.html"):
+    file_path = "index.html"  # 容器内运行
+else:
+    file_path = "python-backed/index.html"  # 本地开发
 
 app = FastAPI()  # 初始化fastapi
 
@@ -27,4 +32,6 @@ if __name__ == "__main__":
     # 启动服务，因为我们这个文件叫做 main.py，所以需要启动 main.py 里面的 app
     # 第一个参数 "main:app" 就表示这个含义，然后是 host 和 port 表示监听的 ip 和端口
     # 看服务器情况去选择是否开uvicorn的reload，因为开启后吃性能
-    uvicorn.run("main:app", host="127.0.0.1", port=8888, reload=True)
+    host = os.getenv("HOST", "127.0.0.1")
+    port = int(os.getenv("PORT", "8888"))
+    uvicorn.run("main:app", host=host, port=port, reload=True)

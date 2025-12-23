@@ -1,12 +1,18 @@
-import aioredis
+import os
+import redis.asyncio as aioredis
 
-redis = aioredis.from_url("redis://localhost:6379", encoding="utf8", decode_responses=True)
+# 从环境变量读取 Redis 配置，支持容器化部署
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+REDIS_PORT = os.getenv("REDIS_PORT", "6379")
+REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
 
-ac_bangumi_redis = aioredis.from_url("redis://localhost:6379", encoding="utf8", decode_responses=True, db=1)
+redis = aioredis.from_url(REDIS_URL, encoding="utf8", decode_responses=True)
 
-bili_cid_redis = aioredis.from_url("redis://localhost:6379", encoding="utf8", decode_responses=True, db=2)
+ac_bangumi_redis = aioredis.from_url(REDIS_URL, encoding="utf8", decode_responses=True, db=1)
 
-haokan_redis = aioredis.from_url("redis://localhost:6379", encoding="utf8", decode_responses=True, db=3)
+bili_cid_redis = aioredis.from_url(REDIS_URL, encoding="utf8", decode_responses=True, db=2)
+
+haokan_redis = aioredis.from_url(REDIS_URL, encoding="utf8", decode_responses=True, db=3)
 
 # 发现这些代码写在views模块里面还好些233333
 

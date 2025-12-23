@@ -1,0 +1,55 @@
+services:
+  # Redis 缓存服务
+  redis:
+    image: docker.io/library/redis:7-alpine
+    container_name: videoparse-redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - videoparse-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Python FastAPI 后端
+  backend:
+    build:
+      context: ./python-backed
+      dockerfile: Dockerfile
+    container_name: videoparse-backend
+    restart: unless-stopped
+    ports:
+      - "8888:8888"
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    networks:
+      - videoparse-net
+
+  # Vue 前端 (使用 nginx 托管)
+  frontend:
+    build:
+      context: ./vue-web
+      dockerfile: Dockerfile
+    container_name: videoparse-frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - videoparse-net
+
+networks:
+  videoparse-net:
+    driver: bridge
+
+volumes:
+  redis_data:
+
